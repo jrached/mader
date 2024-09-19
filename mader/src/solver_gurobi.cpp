@@ -664,6 +664,11 @@ bool SolverGurobi::optimize()
       q.push_back(Eigen::Vector3d(tmp[0].getValue(), tmp[1].getValue(), tmp[2].getValue()));
     }
 
+    //Juan: Offset control points and print them.
+    //Don't break mader...
+    perturbCrtlPnts(q);
+    //End
+
     std::cout << "Control_cost_=" << control_cost_.getValue() << std::endl;
     std::cout << "Terminal cost=" << terminal_cost_.getValue() << std::endl;
     std::cout << "Cost=" << cost_.getValue() << std::endl;
@@ -695,4 +700,34 @@ bool SolverGurobi::optimize()
 void SolverGurobi::getSolution(mt::PieceWisePol &solution)
 {
   solution = solution_;
+}
+
+//Juan: Function to offset control point values. 
+void SolverGurobi::perturbCrtlPnts(std::vector<Eigen::Vector3d> &q) 
+{
+    std::random_device rd; //seed
+    std::mt19937 gen(rd()); //Mersenne Twister generator
+    std::uniform_real_distribution<> dis(-1.0, 1.0); //Make number between 0.1 and -0.1
+
+    std::vector<Eigen::Vector3d> q_off;
+
+    //for control point in control points, cp in q.
+    for (const auto& cp : q){
+      //Copy control point into new Eigen::Vector3d object. 
+      Eigen::Vector3d cp_off = cp;
+
+      //Now perturb the control point by a small amount 
+      cp_off.x() += dis(gen);
+      cp_off.y() += dis(gen);
+      cp_off.z() += dis(gen);
+      
+      //Append to q_off vector
+      q_off.push_back(cp_off);
+    }
+
+    //Print old control points
+    std::cout << "\n Control points: " << q << "\n" << std::endl;
+
+    //Print perturbed control points
+    std::cout << "\n Perturbed control points: " << q_off << "\n" << std::endl;
 }

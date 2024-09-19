@@ -194,5 +194,6 @@ private:
   // double a_star_bias_ = 1.0;
   // double a_star_fraction_voxel_size_ = 0.5;
   // double Ra_ = 1e10;
+  void perturbCrtlPnts(std::vector<Eigen::Vector3d> &q);
 };
 #endif
