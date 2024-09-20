@@ -852,6 +852,11 @@ bool Mader::replan(mt::Edges& edges_obstacles_out, std::vector<mt::state>& X_saf
 
   solutions_found_++;
 
+  //JUAN: Don't break mader...
+  std::vector<Eigen::Vector3d> q_off = solver_->getPCtrlPnts();
+
+  std::cout << "Offset control points here: " << q_off << std::endl;
+
   // av_improvement_nlopt_ = ((solutions_found_ - 1) * av_improvement_nlopt_ + solver_->improvement_) /
   // solutions_found_;
 

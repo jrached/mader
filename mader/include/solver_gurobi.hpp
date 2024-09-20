@@ -53,6 +53,9 @@ public:
 
   bool checkGradientsUsingFiniteDiff();
 
+  //Juan: Initial Guess Evaluation.
+  std::vector<Eigen::Vector3d> getPCtrlPnts(); //Get the ptrajs from solver_gurobi object.
+
 protected:
 private:
   bool getIntersectionWithPlane(const Eigen::Vector3d &P1, const Eigen::Vector3d &P2, const Eigen::Vector4d &coeff,
@@ -194,6 +197,9 @@ private:
   // double a_star_bias_ = 1.0;
   // double a_star_fraction_voxel_size_ = 0.5;
   // double Ra_ = 1e10;
-  void perturbCrtlPnts(std::vector<Eigen::Vector3d> &q);
-};
+
+  //Juan: Inititial guess evaluation.
+  std::vector<Eigen::Vector3d> perturbed_q; //Make class attribute for perturbed control points.
+  void perturbCrtlPnts(std::vector<Eigen::Vector3d> &q); //Make function for perturbing control points.
+}; 
 #endif

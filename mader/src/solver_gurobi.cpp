@@ -20,6 +20,9 @@
 #include <iostream>
 #include <vector>
 
+#include <fstream> 
+
+
 using namespace termcolor;
 
 SolverGurobi::SolverGurobi(ms::par_solver &par)
@@ -725,9 +728,34 @@ void SolverGurobi::perturbCrtlPnts(std::vector<Eigen::Vector3d> &q)
       q_off.push_back(cp_off);
     }
 
+
+    // // Save control points in a file. (control_points.csv)
+    // std::ofstream file("/home/jrached/Desktop/mader_ws/src/mader/mader/src/control_points.csv", std::ios::app);
+
+    // if (file.is_open())
+    // {
+    //   file << "\n control points: " << std::endl;
+
+    //   for (const auto& cp : q_off)
+    //   {
+    //     file << cp.x() << ", " << cp.y() << ", " << cp.z() << std::endl;
+    //   }
+
+    //   file.close();
+    //   std::cout << "control points saved to control_points.csv" << std::endl;
+    // }else {
+    //   std::cout << "err: couldn't open control_points.csv file" << std::endl;
+    // }
+
+    perturbed_q = q_off;
+    
     //Print old control points
     std::cout << "\n Control points: " << q << "\n" << std::endl;
 
     //Print perturbed control points
-    std::cout << "\n Perturbed control points: " << q_off << "\n" << std::endl;
+    // std::cout << "\n Perturbed control points: " << q_off << "\n" << std::endl;
+}
+
+std::vector<Eigen::Vector3d> SolverGurobi::getPCtrlPnts(){
+  return perturbed_q;
 }
