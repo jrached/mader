@@ -59,6 +59,8 @@ public:
   bool IsTranslating();
   void updateTrajObstacles(mt::dynTraj traj);
 
+  std::vector<Eigen::Vector3d> getPCtrlPnts();
+
 private:
   mt::state M_;
   mt::committedTrajectory plan_;
@@ -168,6 +170,9 @@ private:
   Eigen::Matrix<double, 4, 4> A_rest_pos_basis_inverse_;
 
   separator::Separator* separator_solver_;
+
+  //Juan: Initial guess evaluation
+  std::vector<Eigen::Vector3d> q_off;
 };
 
 #endif

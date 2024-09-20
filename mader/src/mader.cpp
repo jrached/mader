@@ -853,9 +853,8 @@ bool Mader::replan(mt::Edges& edges_obstacles_out, std::vector<mt::state>& X_saf
   solutions_found_++;
 
   //JUAN: Don't break mader...
-  std::vector<Eigen::Vector3d> q_off = solver_->getPCtrlPnts();
-
-  std::cout << "Offset control points here: " << q_off << std::endl;
+  //Store offset control points in mader attribute.
+  q_off = solver_->getPCtrlPnts();
 
   // av_improvement_nlopt_ = ((solutions_found_ - 1) * av_improvement_nlopt_ + solver_->improvement_) /
   // solutions_found_;
@@ -1095,4 +1094,10 @@ void Mader::printDroneStatus()
       std::cout << bold << "status_=GOAL_REACHED" << reset << std::endl;
       break;
   }
+}
+
+//Juan: Don't break mader....
+//Method to retrieve offset control points from mader.
+std::vector<Eigen::Vector3d> Mader::getPCtrlPnts(){
+  return q_off; 
 }

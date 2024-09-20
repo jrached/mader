@@ -108,6 +108,9 @@ private:
   ros::Publisher pub_fov_;
   ros::Publisher pub_obstacles_;
 
+  //Juan: Initial guess eval.
+  ros::Publisher pub_offset_ctrl_pnts_;
+
   ros::Subscriber sub_term_goal_;
   // ros::Subscriber sub_mode_;
   ros::Subscriber sub_whoplans_;
@@ -127,6 +130,9 @@ private:
 
   int actual_trajID_ = 0;
 
+  //Juan: initial guess evaluation
+  int offset_trajID_ = 0;
+
   int num_of_LPs_run_ = 0;
   int num_of_QCQPs_run_ = 0;
 
@@ -139,4 +145,9 @@ private:
   mt::PieceWisePol pwp_last_;
 
   MADER_timers::Timer timer_stop_;
+
+  //Juan: Don't break mader...
+  //Initial guess evaluation 
+  std::vector<Eigen::Vector3d> q_off; 
+  void pubOffsetCtrlPnts();
 };

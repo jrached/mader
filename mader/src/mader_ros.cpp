@@ -135,6 +135,8 @@ MaderRos::MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3
   pub_text_ = nh1_.advertise<jsk_rviz_plugins::OverlayText>("text", 1);
   pub_fov_ = nh1_.advertise<visualization_msgs::Marker>("fov", 1);
   pub_obstacles_ = nh1_.advertise<visualization_msgs::Marker>("obstacles", 1);
+  //Juan: Trajectory evaluation.
+  pub_offset_ctrl_pnts_ = nh1.advertise<visualization_msgs::Marker>("off_ctlr_pnts", 1);
 
   // Subscribers
   sub_term_goal_ = nh1_.subscribe("term_goal", 1, &MaderRos::terminalGoalCB, this);
@@ -304,6 +306,13 @@ void MaderRos::replanCB(const ros::TimerEvent& e)
     mt::PieceWisePol pwp;
 
     bool replanned = mader_ptr_->replan(edges_obstacles, X_safe, planes, num_of_LPs_run_, num_of_QCQPs_run_, pwp);
+
+    //Juan: Don't break mader...
+    //Get offset control points from mader.cpp from solver_gurobi.cpp
+    q_off = mader_ptr_->getPCtrlPnts();
+    pubOffsetCtrlPnts();
+
+    // std::cout << "Print offset control points: " << q_off << std::endl;
 
     if (par_.visual)
     {
@@ -780,4 +789,45 @@ void MaderRos::verify(bool cond, std::string info_if_false)
     std::cout << termcolor::red << "Aborting" << termcolor::reset << std::endl;
     abort();
   }
+}
+
+void MaderRos::pubOffsetCtrlPnts()
+{
+  /*
+  Super hacky way to publish. Rewrote pubActualTraj() method to publish offset trajs instead. 
+  Find cleaner way to do this. 
+  */
+
+  visualization_msgs::Marker m;
+  m.type = visualization_msgs::Marker::ARROW;
+  m.action = visualization_msgs::Marker::ADD;
+  m.id = offset_trajID_;  // % 3000;  // Start the id again after ___ points published (if not RVIZ goes very slow)
+  m.ns = "OffsetTraj_" + name_drone_;
+  offset_trajID_++;
+
+  m.scale.x = 0.15;
+  m.scale.y = 0.0001;
+  m.scale.z = 0.0001;
+  m.header.stamp = ros::Time::now();
+  m.header.frame_id = world_name_;
+
+  // pose is actually not used in the marker, but if not RVIZ complains about the quaternion
+  m.pose.position = mu::pointOrigin();
+  m.pose.orientation.x = 0.0;
+  m.pose.orientation.y = 0.0;
+  m.pose.orientation.z = 0.0;
+  m.pose.orientation.w = 1.0;
+
+  for (const auto& cp : q_off){
+    geometry_msgs::Point p;
+    p = mu::eigen2point(cp);
+    m.points.push_back(p);
+  }
+
+  if (m.id == 0)
+  {
+    return;
+  }
+
+  pub_offset_ctrl_pnts_.publish(m);
 }
