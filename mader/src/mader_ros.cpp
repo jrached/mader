@@ -136,7 +136,7 @@ MaderRos::MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3
   pub_fov_ = nh1_.advertise<visualization_msgs::Marker>("fov", 1);
   pub_obstacles_ = nh1_.advertise<visualization_msgs::Marker>("obstacles", 1);
   //Juan: Trajectory evaluation.
-  pub_offset_ctrl_pnts_ = nh1.advertise<visualization_msgs::Marker>("off_ctlr_pnts", 1);
+  pub_offset_ctrl_pnts_ = nh1.advertise<visualization_msgs::Marker>("off_ctrl_pnts", 1);
 
   // Subscribers
   sub_term_goal_ = nh1_.subscribe("term_goal", 1, &MaderRos::terminalGoalCB, this);
@@ -144,6 +144,8 @@ MaderRos::MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3
   sub_whoplans_ = nh1_.subscribe("who_plans", 1, &MaderRos::whoPlansCB, this);
   sub_state_ = nh1_.subscribe("state", 1, &MaderRos::stateCB, this);
   sub_traj_ = nh1_.subscribe("/trajs", 20, &MaderRos::trajCB, this);  // The number is the queue size
+  // My subscriber
+  sub_init_guess_ = nh1_.subscribe("init_guess", 1, &MaderRos::initGuessCB, this);
 
   // Timers
   pubCBTimer_ = nh2_.createTimer(ros::Duration(par_.dc), &MaderRos::pubCB, this);
@@ -154,6 +156,7 @@ MaderRos::MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3
   // pubCBTimer_.stop();
   // replanCBTimer_.stop();
   sub_state_.shutdown();
+  sub_init_guess_.shutdown();
   sub_term_goal_.shutdown();
   pubCBTimer_.stop();
   replanCBTimer_.stop();
@@ -421,6 +424,7 @@ void MaderRos::whoPlansCB(const mader_msgs::WhoPlans& msg)
   {  // PANTHER does nothing
     sub_state_.shutdown();
     sub_term_goal_.shutdown();
+    sub_init_guess_.shutdown();
     pubCBTimer_.stop();
     replanCBTimer_.stop();
     mader_ptr_->resetInitialization();
@@ -430,6 +434,7 @@ void MaderRos::whoPlansCB(const mader_msgs::WhoPlans& msg)
   {  // PANTHER is the one who plans now (this happens when the take-off is finished)
     sub_term_goal_ = nh1_.subscribe("term_goal", 1, &MaderRos::terminalGoalCB, this);  // TODO: duplicated from above
     sub_state_ = nh1_.subscribe("state", 1, &MaderRos::stateCB, this);                 // TODO: duplicated from above
+    sub_init_guess_ = nh1_.subscribe("init_guess", 1, &MaderRos::initGuessCB, this);
     pubCBTimer_.start();
     replanCBTimer_.start();
     std::cout << on_blue << "**************MADER STARTED" << reset << std::endl;
@@ -830,4 +835,20 @@ void MaderRos::pubOffsetCtrlPnts()
   }
 
   pub_offset_ctrl_pnts_.publish(m);
+}
+
+void MaderRos::initGuessCB(const visualization_msgs::Marker& msg){
+  //want to store contents in std::vector<Eigen::Vector3d> object
+  std::vector<Eigen::Vector3d> init_guess;
+  for (const auto& p : msg.points){
+    Eigen::Vector3d cp = Eigen::Vector3d(p.x, p.y, p.z);
+    init_guess.push_back(cp); 
+  }
+
+  //First check that the subscriber is working by printing the output here.
+  // std::cout << "Subscriber got this: " << init_guess << std::endl;
+
+  // 1. Store in a class attribute.
+  // 2. Make method from the class instantiated here to pass down the attribute. 
+  //    I.e. You can make a function in mader.cpp to take the attribute as an arument and pass it down to that class. 
 }

@@ -113,6 +113,10 @@ add_executable(test_bspline_utils src/examples/test_bspline_utils.cpp src/bsplin
 add_dependencies(test_bspline_utils ${catkin_EXPORTED_TARGETS})
 target_link_libraries(test_bspline_utils ${catkin_LIBRARIES})
 
+add_executable(guess_publisher src/guess_pub.cpp)
+add_dependencies(guess_publisher ${catkin_EXPORTED_TARGETS})
+target_link_libraries(guess_publisher ${catkin_LIBRARIES} utils)
+
 unset(USE_GUROBI CACHE) # To avoid https://stackoverflow.com/questions/22481647/cmake-if-else-with-option
 
 

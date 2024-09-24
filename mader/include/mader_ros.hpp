@@ -37,6 +37,9 @@ public:
   MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3);
   ~MaderRos();
 
+  //Juan: Traj Eval.
+  
+
 private:
   std::unique_ptr<Mader> mader_ptr_;
 
@@ -117,6 +120,9 @@ private:
   ros::Subscriber sub_state_;
   ros::Subscriber sub_traj_;
 
+  //Juan: Initial guess eval.
+  ros::Subscriber sub_init_guess_;
+
   ros::Timer pubCBTimer_;
   ros::Timer replanCBTimer_;
 
@@ -150,4 +156,5 @@ private:
   //Initial guess evaluation 
   std::vector<Eigen::Vector3d> q_off; 
   void pubOffsetCtrlPnts();
+  void initGuessCB(const visualization_msgs::Marker& msg);
 };
