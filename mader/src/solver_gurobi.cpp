@@ -759,3 +759,9 @@ void SolverGurobi::perturbCrtlPnts(std::vector<Eigen::Vector3d> &q)
 std::vector<Eigen::Vector3d> SolverGurobi::getPCtrlPnts(){
   return perturbed_q;
 }
+
+void SolverGurobi::updateGuess(std::vector<Eigen::Vector3d> &guess){
+  off_guess = guess;
+
+  std::cout << "Gurobi got this: " << off_guess << std::endl;
+}

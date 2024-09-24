@@ -54,7 +54,9 @@ public:
   bool checkGradientsUsingFiniteDiff();
 
   //Juan: Initial Guess Evaluation.
+  std::vector<Eigen::Vector3d> off_guess;
   std::vector<Eigen::Vector3d> getPCtrlPnts(); //Get the ptrajs from solver_gurobi object.
+  void updateGuess(std::vector<Eigen::Vector3d> &guess);
 
 protected:
 private:

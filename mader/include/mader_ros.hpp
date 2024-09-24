@@ -37,9 +37,6 @@ public:
   MaderRos(ros::NodeHandle nh1, ros::NodeHandle nh2, ros::NodeHandle nh3);
   ~MaderRos();
 
-  //Juan: Traj Eval.
-  
-
 private:
   std::unique_ptr<Mader> mader_ptr_;
 

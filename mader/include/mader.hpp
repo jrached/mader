@@ -59,7 +59,10 @@ public:
   bool IsTranslating();
   void updateTrajObstacles(mt::dynTraj traj);
 
+  //Juan: Trajectory evaluation
+  std::vector<Eigen::Vector3d> off_guess;
   std::vector<Eigen::Vector3d> getPCtrlPnts();
+  void updateGuess(std::vector<Eigen::Vector3d> &guess);
 
 private:
   mt::state M_;

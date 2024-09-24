@@ -1101,3 +1101,9 @@ void Mader::printDroneStatus()
 std::vector<Eigen::Vector3d> Mader::getPCtrlPnts(){
   return q_off; 
 }
+
+void Mader::updateGuess(std::vector<Eigen::Vector3d> &guess){
+  off_guess = guess;
+
+  solver_->updateGuess(off_guess);
+}

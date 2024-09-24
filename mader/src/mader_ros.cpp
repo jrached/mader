@@ -848,7 +848,7 @@ void MaderRos::initGuessCB(const visualization_msgs::Marker& msg){
   //First check that the subscriber is working by printing the output here.
   // std::cout << "Subscriber got this: " << init_guess << std::endl;
 
-  // 1. Store in a class attribute.
   // 2. Make method from the class instantiated here to pass down the attribute. 
+  mader_ptr_->updateGuess(init_guess);
   //    I.e. You can make a function in mader.cpp to take the attribute as an arument and pass it down to that class. 
 }
